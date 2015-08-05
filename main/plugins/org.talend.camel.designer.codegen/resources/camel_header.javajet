@@ -810,7 +810,23 @@ if (isProvider) {
 			<%@ include file="@{org.talend.designer.components.localprovider}/components/templates/password.javajet"%>
 			
 			org.apache.camel.component.mail.MailEndpoint <%=mailEndpointVar%> = getMailEndpoint(<%=uriRef%>, <%=userName%>, decryptedPassword_<%=cid%>, <%=subject%>, <%=from%>, <%=to%>, <%=cc%>, <%=bcc%>);
-<%	}else if("cAggregate".equals(nodeComponentName)){
+<%  }else if("cMap".equals(nodeComponentName)){
+
+			String mapVarPath = ElementParameterParser.getValue(node, "__HMAP_VAR_PATH__");
+			mapVarPath = TalendQuoteUtils.removeQuotes(mapVarPath);
+			if (mapVarPath != null && mapVarPath.trim().length()>0) {
+				if (mapVarPath.startsWith("context.")) {
+%>
+			org.talend.transform.runtime.api.MapPathHelper mapPathHelper = new org.talend.transform.runtime.api.MapPathHelper(<%=mapVarPath%>);
+<%
+    			} else {
+%>
+			org.talend.transform.runtime.api.MapPathHelper mapPathHelper = new org.talend.transform.runtime.api.MapPathHelper("<%=mapVarPath%>");
+<%
+    		}} else {
+%>
+			org.talend.transform.runtime.api.MapPathHelper mapPathHelper = new org.talend.transform.runtime.api.MapPathHelper(null);	
+<%	}}else if("cAggregate".equals(nodeComponentName)){
 				boolean usePersistence = "true".equals(ElementParameterParser.getValue(node, "__USE_PERSISTENCE__"));
 				String repository = ElementParameterParser.getValue(node, "__REPOSITORY__");
 				if (usePersistence) {
